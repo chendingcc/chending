@@ -30,11 +30,10 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img 
-              src="/CHENDING_Horizontal_Banner.png" 
-              alt="CHENDING - Discover trends before they're trending" 
-              className="h-24 -my-4"
-            />
+            <div className="flex items-center gap-2">
+              <TrendingUp className="text-blue-600" size={32} />
+              <span className="text-2xl font-bold text-gray-900">CHENDING</span>
+            </div>
           </div>
 
           {/* Desktop Navigation */}

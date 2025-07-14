@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, ChevronDown, Plus, Heart, Star } from 'lucide-react';
 import { blackSwanCategories } from '../data/mockData';
-import { AIBlackSwanPanel } from './AIBlackSwanPanel';
 import { FavoritesPanel } from './FavoritesPanel';
 
 interface FavoriteKeyword {
@@ -257,7 +256,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             </div>
             
             <div className="p-4">
-              <AIBlackSwanPanel onSearch={onSearch} />
+              <div className="text-center py-8">
+                <div className="text-gray-500">AI Keywords Panel Coming Soon</div>
+                <button
+                  onClick={() => onSearch(['ChatGPT', 'AI coding', 'GPT-4', 'artificial intelligence'])}
+                  className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Search AI Keywords
+                </button>
+              </div>
             </div>
           </div>
         )}
