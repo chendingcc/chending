@@ -1,4 +1,4 @@
-import { AIKeyword, AIBlackSwanCategory } from '../types';
+import type { AIKeyword, AIBlackSwanCategory, TrendData } from '../types';
 
 // AI时代黑天鹅关键词数据库
 export const aiBlackSwanKeywords: AIBlackSwanCategory[] = [

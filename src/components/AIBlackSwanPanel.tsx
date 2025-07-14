@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Brain, TrendingUp, AlertTriangle, Star, Filter, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { aiBlackSwanKeywords, generateAITrendData } from '../data/aiBlackSwanData';
-import { AIKeyword, AIBlackSwanCategory } from '../types';
 
 interface AIBlackSwanPanelProps {
   onSearch: (keywords: string[]) => void;

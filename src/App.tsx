@@ -9,7 +9,7 @@ import { SearchBar } from './components/SearchBar';
 import { TrendTable } from './components/TrendTable';
 import { StatsOverview } from './components/StatsOverview';
 import { mockTrendData } from './data/mockData';
-import { TrendData } from './types';
+import type { TrendData } from './types';
 import { searchCache } from './utils/searchCache';
 
 interface FavoriteKeyword {
