@@ -74,9 +74,9 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
           <div className="flex items-center gap-3">
             <Database className="text-blue-600" size={24} />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">搜索缓存管理</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Search Cache Management</h2>
               <p className="text-sm text-gray-600">
-                管理API调用缓存，节省搜索成本
+                Manage API call cache to save search costs
               </p>
             </div>
           </div>
@@ -92,19 +92,19 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-gray-50 border-b border-gray-200">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{stats.totalSearches}</div>
-            <div className="text-sm text-gray-600">总搜索次数</div>
+            <div className="text-sm text-gray-600">Total Searches</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{stats.cacheHits}</div>
-            <div className="text-sm text-gray-600">缓存命中</div>
+            <div className="text-sm text-gray-600">Cache Hits</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-600">{stats.apiCalls}</div>
-            <div className="text-sm text-gray-600">API调用</div>
+            <div className="text-sm text-gray-600">API Calls</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">{savedCalls}</div>
-            <div className="text-sm text-gray-600">节省调用</div>
+            <div className="text-sm text-gray-600">Saved Calls</div>
           </div>
         </div>
 
@@ -115,13 +115,13 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
               <div className="flex items-center gap-2">
                 <TrendingUp className="text-green-600" size={20} />
                 <span className="text-lg font-semibold text-gray-800">
-                  节省率: {savingsPercentage}%
+                  Savings Rate: {savingsPercentage}%
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <HardDrive className="text-gray-600" size={16} />
                 <span className="text-sm text-gray-600">
-                  缓存大小: {cacheSize} KB
+                  Cache Size: {cacheSize} KB
                 </span>
               </div>
             </div>
@@ -131,14 +131,14 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
                 className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
               >
                 <RefreshCw size={14} />
-                刷新数据
+                Refresh Data
               </button>
               <button
                 onClick={handleClearAll}
                 className="flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
               >
                 <Trash2 size={14} />
-                清空缓存
+                Clear Cache
               </button>
             </div>
           </div>
@@ -148,15 +148,15 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
         <div className="flex-1 overflow-y-auto max-h-96">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              缓存记录 ({cacheList.length})
+              Cache Records ({cacheList.length})
             </h3>
             
             {cacheList.length === 0 ? (
               <div className="text-center py-8">
                 <Database size={48} className="text-gray-300 mx-auto mb-4" />
-                <h4 className="text-lg font-semibold text-gray-600 mb-2">暂无缓存记录</h4>
+                <h4 className="text-lg font-semibold text-gray-600 mb-2">No Cache Records</h4>
                 <p className="text-gray-500">
-                  执行搜索后，结果将自动缓存以节省API调用
+                  Search results will be automatically cached after execution to save API calls
                 </p>
               </div>
             ) : (
@@ -179,11 +179,11 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
                       <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-1">
                           <Clock size={12} />
-                          缓存时间: {cache.age}
+                          Cached: {cache.age}
                         </div>
                         <div className="flex items-center gap-1">
                           <TrendingUp size={12} />
-                          API调用: {cache.apiCallCount} 次
+                          API Calls: {cache.apiCallCount}
                         </div>
                       </div>
                     </div>
@@ -191,10 +191,10 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
                     <button
                       onClick={() => handleRefreshCache(cache.keywords)}
                       className="flex items-center gap-2 px-3 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm"
-                      title="刷新此搜索缓存"
+                      title="Refresh this search cache"
                     >
                       <RefreshCw size={14} />
-                      重新搜索
+                      Re-search
                     </button>
                   </div>
                 ))}
@@ -208,12 +208,12 @@ export const CacheManager: React.FC<CacheManagerProps> = ({
           <div className="flex items-start gap-3">
             <AlertCircle className="text-yellow-600 mt-0.5" size={16} />
             <div className="text-sm text-yellow-800">
-              <strong>缓存说明：</strong>
+              <strong>Cache Information:</strong>
               <ul className="mt-1 ml-4 list-disc space-y-1">
-                <li>搜索结果自动缓存24小时，避免重复API调用</li>
-                <li>相同关键词组合会复用缓存结果</li>
-                <li>点击"重新搜索"可强制刷新特定缓存</li>
-                <li>开发过程中建议定期清理缓存以获取最新数据</li>
+                <li>Search results are automatically cached for 24 hours to avoid duplicate API calls</li>
+                <li>Same keyword combinations will reuse cached results</li>
+                <li>Click "Re-search" to force refresh specific cache</li>
+                <li>Regular cache clearing is recommended during development to get latest data</li>
               </ul>
             </div>
           </div>
