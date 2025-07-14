@@ -38,3 +38,4 @@ export interface AIBlackSwanCategory {
   totalKeywords: number;
   avgRelevanceScore: number;
   highRiskCount: number;
+}
