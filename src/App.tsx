@@ -29,7 +29,7 @@ interface User {
 }
 
 function App() {
-  console.log('App component is rendering');
+  console.log('🚀 CHENDING App is starting...');
   
   const [searchResults, setSearchResults] = useState<TrendData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +45,14 @@ function App() {
 
   // Load favorites from localStorage
   useEffect(() => {
+    console.log('📱 Loading favorites from localStorage...');
     const savedFavorites = localStorage.getItem('chending_favorites');
     if (savedFavorites) {
       try {
         setFavorites(JSON.parse(savedFavorites));
+        console.log('✅ Favorites loaded successfully');
       } catch (error) {
-        console.error('Error loading favorites:', error);
+        console.error('❌ Error loading favorites:', error);
       }
     }
   }, []);
@@ -63,12 +65,14 @@ function App() {
   const handleSearch = async (keywords: string[], forceRefresh: boolean = false) => {
     if (keywords.length === 0) return;
 
+    console.log('🔍 Starting search for:', keywords);
     setIsLoading(true);
     
     try {
       const { results, fromCache, cacheAge } = await searchCache.executeSearch(
         keywords,
         async (searchKeywords) => {
+          console.log('🌐 Simulating API call for:', searchKeywords);
           // Simulate API call delay
           await new Promise(resolve => setTimeout(resolve, 1500));
           
@@ -80,7 +84,9 @@ function App() {
             )
           );
 
-          return filteredResults.length > 0 ? filteredResults : mockTrendData.slice(0, 20);
+          const finalResults = filteredResults.length > 0 ? filteredResults : mockTrendData.slice(0, 20);
+          console.log('📊 Search results:', finalResults.length, 'trends found');
+          return finalResults;
         },
         forceRefresh
       );
@@ -89,10 +95,10 @@ function App() {
       setLastSearchFromCache(fromCache);
       
       if (fromCache && cacheAge) {
-        console.log(`Results loaded from cache (${cacheAge} old)`);
+        console.log(`💾 Results loaded from cache (${cacheAge} old)`);
       }
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('❌ Search error:', error);
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -124,7 +130,7 @@ function App() {
   };
 
   const handleTrendClick = (keyword: string) => {
-    console.log('Trend clicked:', keyword);
+    console.log('📈 Trend clicked:', keyword);
   };
 
   const handleAddFavorite = (favorite: FavoriteKeyword) => {
@@ -149,7 +155,7 @@ function App() {
     handleSearch(keywords, true);
   };
 
-  console.log('App rendering with searchResults:', searchResults.length);
+  console.log('🎨 Rendering CHENDING App with', searchResults.length, 'search results');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -199,7 +205,7 @@ function App() {
                 onClick={() => handleSearch(['ChatGPT', 'remote work', 'climate change', 'cryptocurrency'])}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                View All Black Swan Keywords
+                🚀 View Black Swan Keywords
               </button>
               
               <button
@@ -207,7 +213,7 @@ function App() {
                 className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
               >
                 <Sparkles size={20} />
-                AI Era Keywords
+                🤖 AI Era Keywords
               </button>
               
               <button
@@ -215,7 +221,7 @@ function App() {
                 className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
               >
                 <Database size={20} />
-                Cache Management
+                💾 Cache Management
               </button>
             </div>
           </div>
@@ -225,7 +231,7 @@ function App() {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Trend Analysis Results
+                  📊 Trend Analysis Results
                 </h2>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <span>{searchResults.length} keywords analyzed</span>
@@ -312,10 +318,10 @@ function App() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">AI Era Black Swan Keywords</h2>
+              <h2 className="text-xl font-semibold text-gray-900">🤖 AI Era Black Swan Keywords</h2>
               <button
                 onClick={() => setShowAIPanel(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors text-2xl"
               >
                 ×
               </button>
