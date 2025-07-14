@@ -9,7 +9,7 @@ import { SearchBar } from './components/SearchBar';
 import { TrendTable } from './components/TrendTable';
 import { StatsOverview } from './components/StatsOverview';
 import { mockTrendData } from './data/mockData';
-import { type TrendData } from './types';
+import type { TrendData } from './types';
 import { searchCache } from './utils/searchCache';
 
 interface FavoriteKeyword {
@@ -42,7 +42,6 @@ function App() {
   const downloadTrendsData = () => {
     if (trends.length === 0) return;
 
-    // 准备CSV数据
     const csvHeaders = [
       'Keyword',
       'Category', 
@@ -65,13 +64,11 @@ function App() {
       trend.isExploding ? 'Black Swan Candidate' : 'Normal Trend'
     ]);
 
-    // 创建CSV内容
     const csvContent = [
       csvHeaders.join(','),
       ...csvData.map(row => row.join(','))
     ].join('\n');
 
-    // 创建并下载文件
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -87,11 +84,9 @@ function App() {
     setIsLoading(true);
     
     try {
-      // 使用缓存系统执行搜索
       const searchResult = await searchCache.executeSearch(
         keywords,
         async (searchKeywords) => {
-          // 模拟API调用延迟
           await new Promise(resolve => setTimeout(resolve, 1000));
           
           if (searchKeywords.length === 0) {
@@ -114,7 +109,6 @@ function App() {
       });
     } catch (error) {
       console.error('Search failed:', error);
-      // 发生错误时显示所有数据
       setTrends(mockTrendData);
       setLastSearchInfo(null);
     }
@@ -126,7 +120,6 @@ function App() {
     setIsLoading(true);
     
     try {
-      // 强制刷新搜索（不使用缓存）
       const searchResult = await searchCache.executeSearch(
         keywords,
         async (searchKeywords) => {
@@ -143,7 +136,7 @@ function App() {
             return filteredTrends.length === 0 ? mockTrendData : filteredTrends;
           }
         },
-        true // 强制刷新
+        true
       );
       
       setTrends(searchResult.results);
@@ -156,13 +149,13 @@ function App() {
     
     setIsLoading(false);
   };
+
   const handleTrendClick = (keyword: string) => {
     console.log('Trend clicked:', keyword);
   };
 
   const handleAddFavorite = (favorite: FavoriteKeyword) => {
     setFavorites(prev => {
-      // 避免重复添加
       if (prev.some(fav => fav.keyword === favorite.keyword)) {
         return prev;
       }
@@ -184,7 +177,6 @@ function App() {
   };
 
   const handleAuth = async (email: string, password: string, name?: string) => {
-    // 模拟认证过程 - 将来替换为Supabase认证
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     setIsAuthenticated(true);
@@ -208,9 +200,7 @@ function App() {
         onLogout={handleLogout}
       />
 
-      {/* Main Content */}
       <main id="trends" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Search Section */}
         <div className="mb-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover the Next Black Swan Event</h2>
@@ -230,7 +220,6 @@ function App() {
           />
         </div>
 
-        {/* Results Section */}
         {trends.length > 0 && (
           <div className="space-y-8">
             <StatsOverview trends={trends} />
@@ -291,7 +280,6 @@ function App() {
           </div>
         )}
 
-        {/* Empty State */}
         {trends.length === 0 && !isLoading && (
           <div className="text-center py-12">
             <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
@@ -311,13 +299,9 @@ function App() {
         )}
       </main>
 
-      {/* Blog Section */}
       <BlogSection />
-
-      {/* Footer */}
       <Footer />
 
-      {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
@@ -326,7 +310,6 @@ function App() {
         onAuth={handleAuth}
       />
 
-      {/* Cache Manager */}
       <CacheManager
         isOpen={isCacheManagerOpen}
         onClose={() => setIsCacheManagerOpen(false)}
