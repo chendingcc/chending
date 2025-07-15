@@ -33,4 +33,3 @@ export default defineConfig({
     'process.env': {}
   }
 });
-</vite.config.ts>
