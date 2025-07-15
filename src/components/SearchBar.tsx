@@ -52,6 +52,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     if (searchText.trim()) {
       const keywords = searchText.split(',').map(k => k.trim()).filter(k => k);
       onSearch(keywords);
+      setShowDropdown(false);
     }
   };
 
@@ -64,10 +65,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const handleCategorySelect = (categoryName: string) => {
     const category = blackSwanCategories.find(c => c.name === categoryName);
     if (category) {
-      const keywordsText = category.keywords.join(', ');
+      const keywordsText = category.keywords.slice(0, 10).join(', ');
       setSearchText(keywordsText);
       setShowDropdown(false);
       setSelectedCategory(null);
+      onSearch(category.keywords.slice(0, 10));
     }
   };
 
@@ -111,8 +113,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         </button>
       </div>
 
-      <div ref={searchRef}>
-      <div className="relative">
+      <div ref={searchRef} className="relative">
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
@@ -259,7 +260,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               <div className="text-center py-8">
                 <div className="text-gray-500">AI Keywords Panel Coming Soon</div>
                 <button
-                  onClick={() => onSearch(['ChatGPT', 'AI coding', 'GPT-4', 'artificial intelligence'])}
+                  onClick={() => {
+                    onSearch(['ChatGPT', 'AI coding', 'GPT-4', 'artificial intelligence']);
+                    setShowDropdown(false);
+                  }}
                   className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   Search AI Keywords
@@ -268,7 +272,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             </div>
           </div>
         )}
-      </div>
       </div>
 
       {/* Favorites Panel */}

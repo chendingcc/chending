@@ -12,7 +12,7 @@ import { CacheManager } from './components/CacheManager';
 import { mockTrendData } from './data/mockData';
 import { searchCache } from './utils/searchCache';
 import { TrendData } from './types';
-import { Grid, List, Database, TrendingUp, Sparkles } from 'lucide-react';
+import { Grid, List, Database, TrendingUp, Sparkles, Download } from 'lucide-react';
 
 interface FavoriteKeyword {
   keyword: string;
@@ -33,7 +33,7 @@ function App() {
   
   const [searchResults, setSearchResults] = useState<TrendData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authType, setAuthType] = useState<'login' | 'register'>('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,10 +42,13 @@ function App() {
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [showCacheManager, setShowCacheManager] = useState(false);
   const [lastSearchFromCache, setLastSearchFromCache] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // Load favorites from localStorage
+  // 初始化时不加载数据，显示空状态
   useEffect(() => {
-    console.log('📱 Loading favorites from localStorage...');
+    console.log('📱 App initialized...');
+    
+    // 加载收藏夹
     const savedFavorites = localStorage.getItem('chending_favorites');
     if (savedFavorites) {
       try {
@@ -57,26 +60,27 @@ function App() {
     }
   }, []);
 
-  // Save favorites to localStorage
+  // 保存收藏夹到localStorage
   useEffect(() => {
     localStorage.setItem('chending_favorites', JSON.stringify(favorites));
-  }, [favorites]);
+  }, []);
 
   const handleSearch = async (keywords: string[], forceRefresh: boolean = false) => {
     if (keywords.length === 0) return;
 
     console.log('🔍 Starting search for:', keywords);
     setIsLoading(true);
+    setHasSearched(true);
     
     try {
       const { results, fromCache, cacheAge } = await searchCache.executeSearch(
         keywords,
         async (searchKeywords) => {
           console.log('🌐 Simulating API call for:', searchKeywords);
-          // Simulate API call delay
+          // 模拟API调用延迟
           await new Promise(resolve => setTimeout(resolve, 1500));
           
-          // Filter mock data based on search keywords
+          // 根据搜索关键词过滤模拟数据
           const filteredResults = mockTrendData.filter(trend =>
             searchKeywords.some(keyword =>
               trend.keyword.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -84,7 +88,7 @@ function App() {
             )
           );
 
-          const finalResults = filteredResults.length > 0 ? filteredResults : mockTrendData.slice(0, 20);
+          const finalResults = filteredResults.length > 0 ? filteredResults : mockTrendData;
           console.log('📊 Search results:', finalResults.length, 'trends found');
           return finalResults;
         },
@@ -105,13 +109,18 @@ function App() {
     }
   };
 
+  const handleViewAllBlackSwanKeywords = () => {
+    setHasSearched(true);
+    setSearchResults(mockTrendData);
+  };
+
   const handleAuthClick = (type: 'login' | 'register') => {
     setAuthType(type);
     setShowAuthModal(true);
   };
 
   const handleAuth = async (email: string, password: string, name?: string) => {
-    // Simulate authentication
+    // 模拟认证
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const userData = {
@@ -155,6 +164,33 @@ function App() {
     handleSearch(keywords, true);
   };
 
+  const handleDownloadCSV = () => {
+    const csvHeaders = ['Keyword', 'Category', 'Search Volume', 'Growth %', 'Status', 'Is Exploding'];
+    const csvData = searchResults.map(trend => [
+      `"${trend.keyword}"`,
+      `"${trend.category}"`,
+      trend.searchVolume,
+      `${trend.changePercentage}%`,
+      trend.currentTrend,
+      trend.isExploding ? 'Yes' : 'No'
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `chending-trends-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   console.log('🎨 Rendering CHENDING App with', searchResults.length, 'search results');
 
   return (
@@ -190,43 +226,28 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {searchResults.length === 0 ? (
+        {!hasSearched ? (
+          /* Empty State - 显示引导用户开始搜索 */
           <div className="text-center py-16">
             <div className="mb-8">
-              <TrendingUp size={64} className="text-gray-300 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-600 mb-4">Ready to Start Trend Hunting?</h2>
-              <p className="text-gray-500 mb-8 max-w-md mx-auto">
+              <TrendingUp size={64} className="text-gray-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Ready to Start Trend Hunting?</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto mb-8">
                 Click the search box to view Black Swan keyword categories, or enter custom keywords to start analysis.
               </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
-                onClick={() => handleSearch(['ChatGPT', 'remote work', 'climate change', 'cryptocurrency'])}
+                onClick={handleViewAllBlackSwanKeywords}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                🚀 View Black Swan Keywords
-              </button>
-              
-              <button
-                onClick={() => setShowAIPanel(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
-              >
-                <Sparkles size={20} />
-                🤖 AI Era Keywords
-              </button>
-              
-              <button
-                onClick={() => setShowCacheManager(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-              >
-                <Database size={20} />
-                💾 Cache Management
+                View All Black Swan Keywords
               </button>
             </div>
           </div>
         ) : (
           <>
+            {/* Stats Overview */}
+            <StatsOverview trends={searchResults} />
+
             {/* Results Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
               <div>
@@ -234,7 +255,11 @@ function App() {
                   📊 Trend Analysis Results
                 </h2>
                 <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{searchResults.length} keywords analyzed</span>
+                  <span className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    <Database size={12} />
+                    实时数据
+                  </span>
+                  <span>Found <strong>{searchResults.length}</strong> keyword trends</span>
                   {lastSearchFromCache && (
                     <span className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full">
                       <Database size={12} />
@@ -247,10 +272,18 @@ function App() {
               <div className="flex items-center gap-3 mt-4 md:mt-0">
                 <button
                   onClick={() => setShowCacheManager(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                  className="flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
                 >
                   <Database size={16} />
-                  Cache Management
+                  缓存管理
+                </button>
+                
+                <button
+                  onClick={handleDownloadCSV}
+                  className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                >
+                  <Download size={16} />
+                  Download CSV
                 </button>
                 
                 <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1">
@@ -279,9 +312,6 @@ function App() {
                 </div>
               </div>
             </div>
-
-            {/* Stats Overview */}
-            <StatsOverview trends={searchResults} />
 
             {/* Results Display */}
             {viewMode === 'grid' ? (
