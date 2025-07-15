@@ -35,7 +35,7 @@ export const API_CONFIG = {
 // TODO: SERPAPI_INTEGRATION - Step 2.6: Environment validation
 export const validateApiConfig = (): boolean => {
   if (!API_CONFIG.SERPAPI_KEY || API_CONFIG.SERPAPI_KEY === 'YOUR_SERPAPI_KEY_HERE') {
-    console.error('❌ SERPAPI_KEY is not configured. Please set REACT_APP_SERPAPI_KEY in your .env file');
+    console.warn('⚠️ SERPAPI_KEY is not configured. Using mock data fallback. To use real Google Trends data, set REACT_APP_SERPAPI_KEY in your .env file');
     return false;
   }
   return true;

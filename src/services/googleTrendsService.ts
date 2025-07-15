@@ -18,7 +18,16 @@ class GoogleTrendsService {
     try {
       // Validate configuration
       if (!validateApiConfig()) {
-        throw new Error('API configuration is invalid');
+        // Return a special response indicating fallback should be used
+        return {
+          success: false,
+          error: {
+            message: 'SerpAPI key not configured, using mock data',
+            code: 'NO_API_KEY',
+            status: 200, // Not a real error, just missing config
+          },
+          timestamp: Date.now(),
+        };
       }
 
       // Check rate limits
@@ -141,10 +150,19 @@ export const searchTrendsWithFallback = async (keywords: string[]): Promise<Tren
       console.log('✅ Using real Google Trends data');
       return response.data;
     } else {
+      // Check if it's just missing API key (not a real error)
+      if (response.error?.code === 'NO_API_KEY') {
+        console.log('💡 SerpAPI key not configured, using mock data');
+      } else {
+        console.warn('⚠️ API request failed, falling back to mock data:', response.error?.message);
+      }
       throw new Error(response.error?.message || 'API request failed');
     }
   } catch (error) {
-    console.warn('⚠️ Falling back to mock data due to API error:', error);
+    // Only show warning for actual errors, not missing config
+    if (!error.message?.includes('SerpAPI key not configured')) {
+      console.warn('⚠️ Falling back to mock data due to API error:', error);
+    }
     
     // Import mock data as fallback
     const { mockTrendData } = await import('../data/mockData');
