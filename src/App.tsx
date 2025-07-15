@@ -11,6 +11,8 @@ import { AIBlackSwanPanel } from './components/AIBlackSwanPanel';
 import { CacheManager } from './components/CacheManager';
 import { mockTrendData } from './data/mockData';
 import { searchCache } from './utils/searchCache';
+// TODO: SERPAPI_INTEGRATION - Step 5: Import real API service
+import { searchTrendsWithFallback } from './services/googleTrendsService';
 import { TrendData } from './types';
 import { Grid, List, Database, TrendingUp, Sparkles, Download } from 'lucide-react';
 
@@ -76,21 +78,9 @@ function App() {
       const { results, fromCache, cacheAge } = await searchCache.executeSearch(
         keywords,
         async (searchKeywords) => {
-          console.log('🌐 Simulating API call for:', searchKeywords);
-          // 模拟API调用延迟
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          
-          // 根据搜索关键词过滤模拟数据
-          const filteredResults = mockTrendData.filter(trend =>
-            searchKeywords.some(keyword =>
-              trend.keyword.toLowerCase().includes(keyword.toLowerCase()) ||
-              keyword.toLowerCase().includes(trend.keyword.toLowerCase())
-            )
-          );
-
-          const finalResults = filteredResults.length > 0 ? filteredResults : mockTrendData;
-          console.log('📊 Search results:', finalResults.length, 'trends found');
-          return finalResults;
+          // TODO: SERPAPI_INTEGRATION - Step 5.1: Replace mock with real API
+          console.log('🌐 Calling Google Trends API for:', searchKeywords);
+          return await searchTrendsWithFallback(searchKeywords);
         },
         forceRefresh
       );
