@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   ChevronDown, ChevronUp, ArrowUpDown, ArrowUp, ArrowDown,
-  AlertTriangle, Zap, TrendingUp, Activity, ExternalLink, Download,
+  AlertTriangle, Zap, TrendingUp, Activity, ExternalLink, Download, Eye, EyeOff,
 } from 'lucide-react';
 import { TrendEntry, DailyReport } from '../types';
 import { PhaseIndicator } from './PhaseIndicator';
@@ -10,6 +10,9 @@ import { RACEScoreCard } from './RACEScoreCard';
 interface SignalTableProps {
   report: DailyReport | null;
   onExportMarkdown: () => void;
+  watchlist?: string[];
+  onAddToWatchlist?: (keyword: string) => void;
+  onRemoveFromWatchlist?: (keyword: string) => void;
 }
 
 type SortField = 'keyword' | 'zScore' | 'strength' | 'phase' | 'race';
@@ -23,7 +26,9 @@ const SIGNAL_ICON: Record<string, React.ReactNode> = {
   volume_surge: <AlertTriangle size={14} className="text-blue-500" />,
 };
 
-export const SignalTable: React.FC<SignalTableProps> = ({ report, onExportMarkdown }) => {
+export const SignalTable: React.FC<SignalTableProps> = ({
+  report, onExportMarkdown, watchlist = [], onAddToWatchlist, onRemoveFromWatchlist,
+}) => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>('race');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -161,6 +166,9 @@ export const SignalTable: React.FC<SignalTableProps> = ({ report, onExportMarkdo
               >
                 <div className="flex items-center justify-center gap-1">RACE <SortIcon field="race" /></div>
               </th>
+              <th className="px-2 py-2.5 w-10 text-center text-xs font-semibold text-gray-600 uppercase">
+                Watch
+              </th>
               <th className="px-3 py-2.5 w-10"></th>
             </tr>
           </thead>
@@ -235,6 +243,34 @@ export const SignalTable: React.FC<SignalTableProps> = ({ report, onExportMarkdo
                     <RACEScoreCard race={entry.race} compact />
                   </td>
 
+                  {/* Watch button */}
+                  <td className="px-2 py-3 text-center">
+                    {onAddToWatchlist && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const isWatched = watchlist.includes(entry.keyword.toLowerCase());
+                          if (isWatched) {
+                            onRemoveFromWatchlist?.(entry.keyword);
+                          } else {
+                            onAddToWatchlist(entry.keyword);
+                          }
+                        }}
+                        className={`p-1 rounded transition-colors ${
+                          watchlist.includes(entry.keyword.toLowerCase())
+                            ? 'text-amber-500 hover:text-amber-600'
+                            : 'text-gray-300 hover:text-amber-500'
+                        }`}
+                        title={watchlist.includes(entry.keyword.toLowerCase()) ? 'Remove from watchlist' : 'Add to watchlist'}
+                      >
+                        {watchlist.includes(entry.keyword.toLowerCase())
+                          ? <Eye size={14} />
+                          : <EyeOff size={14} />
+                        }
+                      </button>
+                    )}
+                  </td>
+
                   {/* Expand arrow */}
                   <td className="px-3 py-3 text-center">
                     {expandedRow === entry.keyword
@@ -247,7 +283,7 @@ export const SignalTable: React.FC<SignalTableProps> = ({ report, onExportMarkdo
                 {/* Expanded detail */}
                 {expandedRow === entry.keyword && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-4 bg-gray-50 border-t border-gray-200">
+                    <td colSpan={8} className="px-4 py-4 bg-gray-50 border-t border-gray-200">
                       <SignalDetail entry={entry} />
                     </td>
                   </tr>
